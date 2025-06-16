@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NIBE Heatpump UI (test)</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2rem;
+      background: #f0f0f0;
+    }
+    button {
+      padding: 1rem 2rem;
+      margin: 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    #status {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>NIBE Heatpump Control (test)</h1>
+
+  <button onclick="login()"> Login (OAuth 2.0 - Mock)</button>
+  <button onclick="turnOnWaterHeating()"> Water Heating On</button>
+  <button onclick="setACPower()"> Set AC to 80%</button>
+  <button onclick="logout()"> Log Out</button>
+
+  <div id="status">Status: Not logged in</div>
+
+  <script>
+    let accessToken = null;
+
+    function updateStatus(message) {
+      document.getElementById('status').innerText = `Status: ${message}`;
+    }
+
+   
+    function login() {
+      
+      setTimeout(() => {
+        accessToken = "mocked-access-token-12345";
+        updateStatus("Logged in (mocked token)");
+        console.log("Access Token:", accessToken);
+      }, 1000);
+    }
+
+    
+    function turnOnWaterHeating() {
+      if (!accessToken) {
+        updateStatus("You must log in first.");
+        return;
+      }
+
+      
+      fetch("https://example.com/mock-api/water-heating", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + accessToken,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ mode: "on" })
+      })
+      .then(() => updateStatus("Water heating turned ON (mocked)"))
+      .catch(() => updateStatus("Failed to send request"));
+    }
+
+    function setACPower() {
+      if (!accessToken) {
+        updateStatus("You must log in first.");
+        return;
+      }
+
+      fetch("https://example.com/mock-api/ac", {
+        method: "PUT",
+        headers: {
+          "Authorization": "Bearer " + accessToken,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ level: 3, power: 80 })
+      })
+      .then(() => updateStatus("AC set to level 3 / 80% (testi)"))
+      .catch(() => updateStatus("AC error"));
+    }
+
+    function logout() {
+      accessToken = null;
+      updateStatus("Logged out");
+    }
+  </script>
+
+</body>
+</html>
